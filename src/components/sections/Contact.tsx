@@ -47,20 +47,20 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="min-h-screen py-20 bg-gradient-to-b from-gray-900 to-gray-800">
+    <section id="contact" className="min-h-screen py-20 theme-bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Get in Touch</h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold theme-text-primary mb-4">Get in Touch</h2>
+          <p className="text-lg theme-text-secondary max-w-2xl mx-auto">
             Have a question or want to collaborate on AI and computer vision projects? Let's connect!
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="bg-gray-800/50 p-8 rounded-xl backdrop-blur-sm border border-gray-700/50">
+          <div className="theme-bg-elevated p-8 rounded-xl backdrop-blur-sm border" style={{ borderColor: 'var(--border-color)' }}>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="name" className="block text-sm font-medium theme-text-secondary">
                   Name
                 </label>
                 <input
@@ -70,12 +70,17 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md theme-text-primary theme-bg-main border focus:border-blue-500 focus:ring-blue-500"
+                  style={{ 
+                    backgroundColor: 'var(--bg-main)', 
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)'
+                  }}
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="email" className="block text-sm font-medium theme-text-secondary">
                   Email
                 </label>
                 <input
@@ -85,12 +90,17 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md theme-text-primary theme-bg-main border focus:border-blue-500 focus:ring-blue-500"
+                  style={{ 
+                    backgroundColor: 'var(--bg-main)', 
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)'
+                  }}
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="message" className="block text-sm font-medium theme-text-secondary">
                   Message
                 </label>
                 <textarea
@@ -100,21 +110,27 @@ const Contact: React.FC = () => {
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+                  className="mt-1 block w-full rounded-md theme-text-primary theme-bg-main border focus:border-blue-500 focus:ring-blue-500"
+                  style={{ 
+                    backgroundColor: 'var(--bg-main)', 
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)'
+                  }}
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+                className="w-full py-3 px-4 rounded-lg transition duration-300 transform hover:scale-105"
+                style={{ backgroundColor: 'var(--accent)', color: '#fff' }}
               >
                 Send Message
               </button>
             </form>
           </div>
 
-          <div className="bg-gray-800/50 p-8 rounded-xl backdrop-blur-sm border border-gray-700/50">
-            <h3 className="text-xl font-bold text-white mb-6">Connect With Me</h3>
+          <div className="theme-bg-elevated p-8 rounded-xl backdrop-blur-sm border" style={{ borderColor: 'var(--border-color)' }}>
+            <h3 className="text-xl font-bold theme-text-primary mb-6">Connect With Me</h3>
             <div className="space-y-4">
               {socialLinks.map((link) => (
                 <a
@@ -122,7 +138,8 @@ const Contact: React.FC = () => {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-3 text-gray-300 hover:text-blue-400 transition duration-300"
+                  className="flex items-center space-x-3 theme-text-secondary hover:transition duration-300"
+                  style={{ color: 'var(--text-secondary)' }}
                 >
                   <span>{link.platform}</span>
                 </a>
@@ -130,8 +147,8 @@ const Contact: React.FC = () => {
             </div>
 
             <div className="mt-8">
-              <h3 className="text-xl font-bold text-white mb-4">Location</h3>
-              <p className="text-gray-300">
+              <h3 className="text-xl font-bold theme-text-primary mb-4">Location</h3>
+              <p className="theme-text-secondary">
                 Based in Your City, Country
                 <br />
                 Available for remote work worldwide

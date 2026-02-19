@@ -1,0 +1,55 @@
+/* Black/Dark Theme - Activate by adding this class to body */
+/* To use: Add class="dark-theme" to the body element in index.html */
+
+/* Override Tailwind colors for black theme */
+.dark-theme {
+  /* Background colors - pure black shades */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #111111;
+  --bg-card: #1a1a1a;
+  
+  /* Text colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #a3a3a3;
+  
+  /* Accent colors - more subtle for black theme */
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  
+  /* Border colors */
+  --border-color: #262626;
+  --border-light: #404040;
+}
+
+/* Dark theme body styles */
+.dark-theme body {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Dark theme section backgrounds */
+.dark-theme section {
+  background-color: #000000 !important;
+}
+
+.dark-theme section:nth-child(odd) {
+  background-color: #0a0a0a !important;
+}
+
+/* Dark theme cards */
+.dark-theme .bg-gray-800,
+.dark-theme .bg-gray-800\/50 {
+  background-color: #1a1a1a !important;
+  border-color: #262626 !important;
+}
+
+/* Dark theme gradients */
+.dark-theme .bg-gradient-to-b {
+  background: linear-gradient(to bottom, #000000, #0a0a0a) !important;
+}
+
+.dark-theme .bg-gradient-to-r {
+  background: linear-gradient(to right, #1a1a1a, #0a0a0a) !important;
+}

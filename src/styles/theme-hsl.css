@@ -1,0 +1,384 @@
+/* ==========================================================================
+   Perceptually Balanced HSL Color System
+   High-end SaaS aesthetic (Linear/Stripe inspired)
+   
+   Rules Applied:
+   - Light Mode: L 98-99%, S 2-4% of theme hue
+   - Dark Mode: L 4-7%, S 10-15% of theme hue
+   - Red: Hue 355° (Rose/Ruby)
+   - Green: Hue 160° (Emerald/Teal)
+   - Contrast: Primary 10:1, Secondary 4.5:1
+   ========================================================================== */
+
+/* ==========================================================================
+   NEUTRAL THEME (Black/White)
+   Pure grayscale - no hue tinting
+   ========================================================================== */
+
+:root.neutral,
+:root.neutral[data-mode="light"] {
+  /* Light Mode - Airy & Clean */
+  --bg-main: hsl(240, 5%, 98%);      /* L98%, S5% - Off-white */
+  --bg-surface: hsl(240, 5%, 95%);  /* L95%, S5% - Slightly darker for cards */
+  --bg-elevated: hsl(240, 5%, 97%); /* Off-white for reduced glare */
+  
+  /* Text - High contrast for accessibility - optimized for boldish backgrounds */
+  --text-primary: hsl(240, 15%, 8%);   /* L8% - Near black, stronger saturation for bold bg */
+  --text-secondary: hsl(240, 10%, 22%); /* L22% - Stronger contrast */
+  --text-muted: hsl(240, 8%, 40%);     /* L40% - Stronger muted text */
+  
+  /* Accent - Neutral gray hero */
+  --accent: hsl(240, 12%, 18%);        /* L18% - Darker accent for light backgrounds */
+  --accent-hover: hsl(240, 12%, 10%); /* L10% - Darker hover */
+  --accent-light: hsl(240, 8%, 92%);  /* L92% - Subtle accent background */
+  --accent-contrast: hsl(240, 14%, 16%); /* Light-mode readable accent text */
+  --glow-color: hsl(240, 10%, 26%);   /* Sphere glow token */
+  
+  /* Borders */
+  --border-color: hsl(240, 5%, 85%);   /* L85% - More visible borders */
+  --border-light: hsl(240, 5%, 92%);  /* L92% - Very subtle */
+  
+  /* Shadows - Soft elevation */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+:root.neutral.dark,
+:root.neutral[data-mode="dark"] {
+  /* Dark Mode - Deep & Premium */
+  --bg-main: hsl(240, 10%, 5%);       /* L5% - Deep charcoal */
+  --bg-surface: hsl(240, 8%, 8%);     /* L8% - Slightly lighter for cards */
+  --bg-elevated: hsl(240, 6%, 12%);   /* L12% - For modals */
+  
+  /* Text - High contrast */
+  --text-primary: hsl(240, 5%, 98%);  /* L98% - Near white, 13:1 contrast */
+  --text-secondary: hsl(240, 5%, 85%); /* L85% - 7:1 contrast */
+  --text-muted: hsl(240, 4%, 60%);    /* L60% - 4.5:1 contrast */
+  
+  /* Accent - Light gray hero */
+  --accent: hsl(240, 5%, 85%);        /* L85% - Light gray */
+  --accent-hover: hsl(240, 5%, 92%);  /* L92% - Brighter hover */
+  --accent-light: hsl(240, 10%, 15%); /* L15% - Subtle accent bg */
+  --accent-contrast: hsl(240, 5%, 92%); /* Dark-mode readable accent text */
+  --glow-color: hsl(240, 8%, 78%);    /* Sphere glow token */
+  
+  /* Text on accent - for buttons with accent background */
+  --text-on-accent: hsl(240, 10%, 10%); /* Dark text on light accent */
+  
+  /* Borders */
+  --border-color: hsl(240, 8%, 18%);  /* L18% - Visible borders */
+  --border-light: hsl(240, 6%, 12%); /* L12% - Subtle */
+  
+  /* Shadows - Depth */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+
+/* ==========================================================================
+   BLUE THEME (Indigo)
+   Light blue tinting for light mode, deep midnight blue for dark
+   ========================================================================== */
+
+:root.blue,
+:root.blue[data-mode="light"] {
+  /* Light Mode - Light Blue Tint */
+  --bg-main: hsl(220, 50%, 92%);     /* More visible blue tint */
+  --bg-surface: hsl(220, 45%, 89%);  /* Slightly darker for cards */
+  --bg-elevated: hsl(220, 40%, 95%); /* Lighter for modals */
+  
+  /* Text - Optimized for boldish backgrounds - darker & richer */
+  --text-primary: hsl(220, 30%, 10%);   /* L10% - Darker with more saturation */
+  --text-secondary: hsl(220, 20%, 28%); /* L28% - Stronger contrast */
+  --text-muted: hsl(220, 15%, 45%);   /* L45% - More visible muted text */
+  
+  /* Accent - Blue */
+  --accent: hsl(220, 80%, 50%);        /* S80%, L50% - Vibrant blue */
+  --accent-hover: hsl(220, 85%, 40%); /* Darker hover */
+  --accent-light: hsl(220, 50%, 88%); /* Visible blue accent bg */
+  --accent-contrast: hsl(220, 78%, 30%); /* Light-mode readable accent text */
+  --glow-color: hsl(220, 88%, 56%);   /* Sphere glow token */
+  
+  /* Borders */
+  --border-color: hsl(220, 20%, 80%);  /* L80% - More visible blue-tinted borders */
+  --border-light: hsl(220, 15%, 88%); /* L88% */
+  
+  /* Shadows - Blue tint */
+  --shadow-sm: 0 1px 2px rgba(30, 58, 138, 0.08);
+  --shadow-md: 0 4px 12px rgba(30, 58, 138, 0.12);
+  --shadow-lg: 0 12px 40px rgba(30, 58, 138, 0.18);
+}
+
+:root.blue.dark,
+:root.blue[data-mode="dark"] {
+  /* Dark Mode - Midnight Blue */
+  --bg-main: hsl(220, 25%, 5%);       /* L5%, S25% - Deep midnight blue */
+  --bg-surface: hsl(220, 20%, 8%);    /* L8% */
+  --bg-elevated: hsl(220, 18%, 12%);  /* L12% */
+  
+  /* Text - Slightly blue-tinted white */
+  --text-primary: hsl(220, 10%, 98%); /* L98% */
+  --text-secondary: hsl(220, 10%, 82%); /* L82% */
+  --text-muted: hsl(220, 8%, 60%);    /* L60% */
+  
+  /* Accent - Bright Blue */
+  --accent: hsl(220, 85%, 60%);        /* S85%, L60% - Vibrant blue */
+  --accent-hover: hsl(220, 90%, 70%); /* Brighter */
+  --accent-light: hsl(220, 40%, 18%); /* L18% - Subtle blue bg */
+  --accent-contrast: hsl(220, 90%, 72%); /* Dark-mode readable accent text */
+  --glow-color: hsl(220, 92%, 68%);   /* Sphere glow token */
+  
+  /* Text on accent - white text on bright accent */
+  --text-on-accent: hsl(0, 0%, 100%); /* White text */
+  
+  /* Borders */
+  --border-color: hsl(220, 20%, 18%); /* L18% */
+  --border-light: hsl(220, 15%, 12%); /* L12% */
+  
+  /* Shadows - Deep blue */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(30, 58, 138, 0.3);
+  --shadow-lg: 0 12px 40px rgba(30, 58, 138, 0.4);
+}
+
+
+/* ==========================================================================
+   RED THEME (Rose/Ruby)
+   Hue shifted to 355° to avoid "emergency" vibes
+   ========================================================================== */
+
+:root.red,
+:root.red[data-mode="light"] {
+  /* Light Mode - Light Rose Tint */
+  --bg-main: hsl(355, 50%, 92%);     /* More visible rose tint */
+  --bg-surface: hsl(355, 45%, 89%);  /* Slightly darker for cards */
+  --bg-elevated: hsl(355, 40%, 95%); /* Lighter for modals */
+  
+  /* Text - Optimized for boldish backgrounds - darker & richer */
+  --text-primary: hsl(355, 30%, 10%);   /* L10% - Darker with more saturation */
+  --text-secondary: hsl(355, 20%, 28%); /* L28% - Stronger contrast */
+  --text-muted: hsl(355, 15%, 45%);   /* L45% - More visible muted text */
+  
+  /* Accent - Rose/Ruby */
+  --accent: hsl(355, 75%, 45%);        /* L45% - Vibrant ruby */
+  --accent-hover: hsl(355, 80%, 35%); /* Darker hover */
+  --accent-light: hsl(355, 50%, 88%); /* Visible rose accent bg */
+  --accent-contrast: hsl(355, 70%, 32%); /* Light-mode readable accent text */
+  --glow-color: hsl(355, 84%, 52%);   /* Sphere glow token */
+  
+  /* Borders */
+  --border-color: hsl(355, 20%, 80%); /* L80% - More visible rose-tinted borders */
+  --border-light: hsl(355, 15%, 88%); /* L88% */
+  
+  /* Shadows - Rose tint */
+  --shadow-sm: 0 1px 2px rgba(90, 30, 40, 0.08);
+  --shadow-md: 0 4px 12px rgba(90, 30, 40, 0.12);
+  --shadow-lg: 0 12px 40px rgba(90, 30, 40, 0.18);
+}
+
+:root.red.dark,
+:root.red[data-mode="dark"] {
+  /* Dark Mode - Deep Midnight Rose */
+  --bg-main: hsl(355, 25%, 5%);       /* L5%, S25% - Deep rose-black */
+  --bg-surface: hsl(355, 20%, 8%);   /* L8% */
+  --bg-elevated: hsl(355, 18%, 12%); /* L12% */
+  
+  /* Text - Slightly rose-tinted white */
+  --text-primary: hsl(355, 10%, 98%); /* L98% */
+  --text-secondary: hsl(355, 10%, 82%); /* L82% */
+  --text-muted: hsl(355, 8%, 60%);    /* L60% */
+  
+  /* Accent - Bright Rose */
+  --accent: hsl(355, 80%, 62%);       /* S80%, L62% - Vibrant rose */
+  --accent-hover: hsl(355, 85%, 72%); /* Brighter */
+  --accent-light: hsl(355, 40%, 18%); /* L18% - Subtle rose bg */
+  --accent-contrast: hsl(355, 88%, 74%); /* Dark-mode readable accent text */
+  --glow-color: hsl(355, 88%, 70%);   /* Sphere glow token */
+  
+  /* Text on accent - white text on bright accent */
+  --text-on-accent: hsl(0, 0%, 100%); /* White text */
+  
+  /* Borders */
+  --border-color: hsl(355, 20%, 18%); /* L18% */
+  --border-light: hsl(355, 15%, 12%); /* L12% */
+  
+  /* Shadows - Deep rose */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(90, 30, 40, 0.3);
+  --shadow-lg: 0 12px 40px rgba(90, 30, 40, 0.4);
+}
+
+
+/* ==========================================================================
+   GREEN THEME (Emerald/Teal)
+   Hue shifted to 160° to avoid "neon" vibes
+   ========================================================================== */
+
+:root.green,
+:root.green[data-mode="light"] {
+  /* Light Mode - Light Green Tint */
+  --bg-main: hsl(160, 50%, 92%);      /* More visible green tint */
+  --bg-surface: hsl(160, 45%, 89%);   /* Slightly darker for cards */
+  --bg-elevated: hsl(160, 40%, 95%); /* Lighter for modals */
+  
+  /* Text - Optimized for boldish backgrounds - darker & richer */
+  --text-primary: hsl(160, 30%, 10%);   /* L10% - Darker with more saturation */
+  --text-secondary: hsl(160, 20%, 28%); /* L28% - Stronger contrast */
+  --text-muted: hsl(160, 15%, 45%);   /* L45% - More visible muted text */
+  
+  /* Accent - Emerald/Teal */
+  --accent: hsl(160, 70%, 35%);        /* L35% - Vibrant emerald */
+  --accent-hover: hsl(160, 75%, 25%); /* Darker hover */
+  --accent-light: hsl(160, 50%, 88%); /* Visible green accent bg */
+  --accent-contrast: hsl(160, 68%, 24%); /* Light-mode readable accent text */
+  --glow-color: hsl(160, 78%, 42%);   /* Sphere glow token */
+  
+  /* Borders */
+  --border-color: hsl(160, 20%, 80%); /* L80% - More visible green-tinted borders */
+  --border-light: hsl(160, 15%, 88%); /* L88% */
+  
+  /* Shadows - Green tint */
+  --shadow-sm: 0 1px 2px rgba(20, 60, 50, 0.08);
+  --shadow-md: 0 4px 12px rgba(20, 60, 50, 0.12);
+  --shadow-lg: 0 12px 40px rgba(20, 60, 50, 0.18);
+}
+
+:root.green.dark,
+:root.green[data-mode="dark"] {
+  /* Dark Mode - Deep Midnight Emerald */
+  --bg-main: hsl(160, 25%, 5%);        /* L5%, S25% - Deep emerald-black */
+  --bg-surface: hsl(160, 20%, 8%);    /* L8% */
+  --bg-elevated: hsl(160, 18%, 12%);  /* L12% */
+  
+  /* Text - Slightly emerald-tinted white */
+  --text-primary: hsl(160, 10%, 98%); /* L98% */
+  --text-secondary: hsl(160, 10%, 82%); /* L82% */
+  --text-muted: hsl(160, 8%, 60%);    /* L60% */
+  
+  /* Accent - Bright Emerald */
+  --accent: hsl(160, 75%, 48%);        /* S75%, L48% - Vibrant emerald */
+  --accent-hover: hsl(160, 80%, 58%); /* Brighter */
+  --accent-light: hsl(160, 40%, 18%); /* L18% - Subtle emerald bg */
+  --accent-contrast: hsl(160, 84%, 60%); /* Dark-mode readable accent text */
+  --glow-color: hsl(160, 84%, 58%);   /* Sphere glow token */
+  
+  /* Text on accent - white text on bright accent */
+  --text-on-accent: hsl(0, 0%, 100%); /* White text */
+  
+  /* Borders */
+  --border-color: hsl(160, 20%, 18%); /* L18% */
+  --border-light: hsl(160, 15%, 12%); /* L12% */
+  
+  /* Shadows - Deep emerald */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(20, 60, 50, 0.3);
+  --shadow-lg: 0 12px 40px rgba(20, 60, 50, 0.4);
+}
+
+
+/* ==========================================================================
+   Backward Compatibility Layer
+   Maps old variable names to new HSL system
+   ========================================================================== */
+
+/* Map new semantic names to existing component expectations */
+:root,
+:root.neutral,
+:root.blue,
+:root.red,
+:root.green {
+  /* Aliases for existing code compatibility */
+  --bg-primary: var(--bg-main);
+  --bg-secondary: var(--bg-surface);
+  --bg-tertiary: var(--bg-elevated);
+  --bg-card: var(--bg-surface);
+  
+  --accent-primary: var(--accent);
+  --accent-secondary: var(--accent-hover);
+  --accent-contrast: var(--accent);
+  --glow-color: var(--accent);
+  
+  /* Text on accent - fallback for themes that don't define it */
+  --text-on-accent: hsl(0, 0%, 100%);
+}
+
+
+/* ==========================================================================
+   Utility Classes for Theme Application
+   ========================================================================== */
+
+/* Apply theme backgrounds to common elements */
+.theme-bg-main {
+  background-color: var(--bg-main);
+}
+
+.theme-bg-surface {
+  background-color: var(--bg-surface);
+}
+
+.theme-bg-elevated {
+  background-color: var(--bg-elevated);
+}
+
+/* Text utilities */
+.theme-text-primary {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
+}
+
+/* Accent utilities */
+.theme-accent {
+  color: var(--accent);
+}
+
+.theme-accent-bg {
+  background-color: var(--accent);
+}
+
+.theme-accent-bg-light {
+  background-color: var(--accent-light);
+}
+
+/* Border utilities */
+.theme-border {
+  border-color: var(--border-color);
+}
+
+.theme-border-light {
+  border-color: var(--border-light);
+}
+
+/* Shadow utilities */
+.theme-shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.theme-shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+
+/* ==========================================================================
+   Animation & Transition Utilities
+   ========================================================================== */
+
+.theme-transition {
+  transition: 
+    background-color 0.3s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}

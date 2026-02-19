@@ -12,19 +12,19 @@ const skills: Skill[] = [
 
 const About: React.FC = () => {
   return (
-    <section id="about" className="min-h-screen py-20 bg-gradient-to-b from-gray-800 to-gray-900">
+    <section id="about" className="min-h-screen py-20 theme-bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">About Me</h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold theme-text-primary mb-4">About Me</h2>
+          <p className="text-lg theme-text-secondary max-w-2xl mx-auto">
             Bridging the gap between cutting-edge computer vision research and practical applications
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="bg-gray-800/50 p-8 rounded-xl backdrop-blur-sm border border-gray-700/50">
-            <h3 className="text-2xl font-bold text-white mb-6">My Journey</h3>
-            <div className="space-y-4 text-gray-300">
+          <div className="theme-bg-elevated theme-border p-8 rounded-xl backdrop-blur-sm" style={{ borderColor: 'var(--border-color)' }}>
+            <h3 className="text-2xl font-bold theme-text-primary mb-6">My Journey</h3>
+            <div className="space-y-4 theme-text-secondary">
               <p>
                 As a Ph.D. holder in Computer Vision, I've dedicated my career to pushing the boundaries
                 of artificial intelligence and visual computing. My research focuses on developing
@@ -34,7 +34,7 @@ const About: React.FC = () => {
                 I specialize in developing sophisticated AI solutions that bridge the gap between
                 academic research and practical applications. My expertise includes:
               </p>
-              <ul className="list-disc list-inside space-y-2 text-gray-300">
+              <ul className="list-disc list-inside space-y-2 theme-text-secondary">
                 <li>Advanced object detection and tracking systems</li>
                 <li>Deep learning-based image processing</li>
                 <li>Real-time computer vision applications</li>
@@ -43,21 +43,22 @@ const About: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gray-800/50 p-8 rounded-xl backdrop-blur-sm border border-gray-700/50">
-            <h3 className="text-2xl font-bold text-white mb-6">Technical Expertise</h3>
+          <div className="theme-bg-elevated theme-border p-8 rounded-xl backdrop-blur-sm" style={{ borderColor: 'var(--border-color)' }}>
+            <h3 className="text-2xl font-bold theme-text-primary mb-6">Technical Expertise</h3>
             <div className="space-y-6">
               {skills.map((skill) => (
                 <div key={skill.name} className="relative">
                   <div className="flex justify-between mb-2">
-                    <span className="text-gray-200 font-medium">{skill.name}</span>
-                    <span className="text-blue-400">{skill.level}%</span>
+                    <span className="theme-text-primary font-medium">{skill.name}</span>
+                    <span className="theme-accent">{skill.level}%</span>
                   </div>
-                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-2 rounded-full overflow-hidden theme-bg-main" style={{ backgroundColor: 'var(--bg-main)' }}>
                     <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-500 ease-out"
+                      className="h-full rounded-full transition-all duration-500 ease-out"
                       style={{ 
                         width: `${skill.level}%`,
-                        boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)' 
+                        background: 'linear-gradient(to right, var(--accent), var(--accent-hover))',
+                        boxShadow: '0 0 10px var(--accent)' 
                       }}
                     />
                   </div>
@@ -67,24 +68,24 @@ const About: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-16 bg-gray-800/50 p-8 rounded-xl backdrop-blur-sm border border-gray-700/50">
-          <h3 className="text-2xl font-bold text-white mb-6 text-center">Research Interests</h3>
+        <div className="mt-16 theme-bg-elevated theme-border p-8 rounded-xl backdrop-blur-sm" style={{ borderColor: 'var(--border-color)' }}>
+          <h3 className="text-2xl font-bold theme-text-primary mb-6 text-center">Research Interests</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-gray-900/50 rounded-lg border border-gray-700/50">
-              <h4 className="text-xl font-semibold text-blue-400 mb-3">Computer Vision</h4>
-              <p className="text-gray-300">
+            <div className="p-6 theme-bg-main rounded-lg theme-border" style={{ backgroundColor: 'var(--bg-main)', borderColor: 'var(--border-color)' }}>
+              <h4 className="text-xl font-semibold theme-accent mb-3">Computer Vision</h4>
+              <p className="theme-text-secondary">
                 Advancing state-of-the-art in object detection, segmentation, and visual understanding
               </p>
             </div>
-            <div className="p-6 bg-gray-900/50 rounded-lg border border-gray-700/50">
-              <h4 className="text-xl font-semibold text-blue-400 mb-3">Deep Learning</h4>
-              <p className="text-gray-300">
+            <div className="p-6 theme-bg-main rounded-lg theme-border" style={{ backgroundColor: 'var(--bg-main)', borderColor: 'var(--border-color)' }}>
+              <h4 className="text-xl font-semibold theme-accent mb-3">Deep Learning</h4>
+              <p className="theme-text-secondary">
                 Developing novel architectures for complex visual recognition tasks
               </p>
             </div>
-            <div className="p-6 bg-gray-900/50 rounded-lg border border-gray-700/50">
-              <h4 className="text-xl font-semibold text-blue-400 mb-3">AI Applications</h4>
-              <p className="text-gray-300">
+            <div className="p-6 theme-bg-main rounded-lg theme-border" style={{ backgroundColor: 'var(--bg-main)', borderColor: 'var(--border-color)' }}>
+              <h4 className="text-xl font-semibold theme-accent mb-3">AI Applications</h4>
+              <p className="theme-text-secondary">
                 Creating practical solutions for real-world computer vision challenges
               </p>
             </div>

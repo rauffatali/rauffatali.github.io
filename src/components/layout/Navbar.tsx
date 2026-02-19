@@ -72,8 +72,8 @@ const Navbar: React.FC = () => {
       {/* Scroll Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 z-[101]">
         <div 
-          className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
-          style={{ width: `${scrollProgress}%` }}
+          className="h-full transition-all duration-300"
+          style={{ width: `${scrollProgress}%`, backgroundColor: 'var(--accent)' }}
         />
       </div>
 
@@ -82,8 +82,8 @@ const Navbar: React.FC = () => {
           scrolled ? 'w-[92%] md:w-[89%] lg:w-[80%] mt-4' : 'w-full px-6'
         }`}>
           <div className={`mx-auto rounded-2xl transition-all duration-500 ${
-            scrolled ? 'bg-gray-900/90 backdrop-blur-md shadow-lg shadow-gray-900/20 px-6' : 'bg-transparent px-3'
-          }`}>
+            scrolled ? 'theme-bg-surface backdrop-blur-md shadow-lg px-6' : 'bg-transparent px-3'
+          }`} style={scrolled ? { backgroundColor: 'var(--bg-surface)' } : undefined}>
             {/* Desktop Navigation */}
             <div className="hidden md:flex justify-between items-center h-16">
               {/* Logo */}
@@ -94,7 +94,7 @@ const Navbar: React.FC = () => {
                 offset={0}
                 className="text-2xl font-bold relative group cursor-pointer px-3"
               >
-                <span className="text-white group-hover:text-transparent transition-all duration-300 bg-clip-text group-hover:bg-gradient-to-r from-blue-400 to-purple-500">
+                <span className="theme-text-primary group-hover:text-transparent transition-all duration-300 bg-clip-text group-hover:bg-gradient-to-r" style={{ backgroundImage: 'linear-gradient(to right, var(--accent), var(--accent-hover))' }}>
                   RF
                 </span>
               </Link>
@@ -113,10 +113,11 @@ const Navbar: React.FC = () => {
                     className={`
                       relative px-5 py-2 cursor-pointer
                       ${activeSection === item.path 
-                        ? 'text-white bg-white/10 rounded-lg' 
-                        : 'text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors duration-300'
+                        ? 'theme-text-primary rounded-lg' 
+                        : 'theme-text-secondary hover:theme-text-primary rounded-lg transition-colors duration-300'
                       }
                     `}
+                    style={activeSection === item.path ? { backgroundColor: 'var(--accent-light)' } : undefined}
                   >
                     <span className="relative z-10 text-sm">
                       {item.title}
@@ -133,25 +134,25 @@ const Navbar: React.FC = () => {
                 smooth={true}
                 duration={500}
                 offset={0}
-                className="text-2xl font-bold text-white cursor-pointer"
+                className="text-2xl font-bold cursor-pointer theme-text-primary"
               >
                 RF
               </Link>
 
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative w-10 h-10 text-white focus:outline-none cursor-pointer"
+                className="relative w-10 h-10 focus:outline-none cursor-pointer theme-text-primary"
               >
                 <div className="absolute w-6 transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
-                  <span className={`absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${
+                  <span className={`absolute h-0.5 w-6 transform transition duration-300 ease-in-out ${
                     isOpen ? 'rotate-45 delay-200' : '-translate-y-2'
-                  }`} />
-                  <span className={`absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${
+                  }`} style={{ backgroundColor: 'var(--text-primary)' }} />
+                  <span className={`absolute h-0.5 w-6 transform transition duration-300 ease-in-out ${
                     isOpen ? 'opacity-0' : 'opacity-100'
-                  }`} />
-                  <span className={`absolute h-0.5 w-6 bg-white transform transition duration-300 ease-in-out ${
+                  }`} style={{ backgroundColor: 'var(--text-primary)' }} />
+                  <span className={`absolute h-0.5 w-6 transform transition duration-300 ease-in-out ${
                     isOpen ? '-rotate-45 delay-200' : 'translate-y-2'
-                  }`} />
+                  }`} style={{ backgroundColor: 'var(--text-primary)' }} />
                 </div>
               </button>
             </div>
@@ -161,7 +162,7 @@ const Navbar: React.FC = () => {
           <div className={`md:hidden overflow-hidden transition-all duration-300 ${
             isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           }`}>
-            <div className="bg-gray-900/90 backdrop-blur-md shadow-lg">
+            <div className="backdrop-blur-md shadow-lg" style={{ backgroundColor: 'var(--bg-surface)' }}>
               {navItems.map((item) => (
                 <Link
                   key={item.path}
@@ -173,9 +174,10 @@ const Navbar: React.FC = () => {
                   activeClass="active"
                   className={`block px-6 py-3 text-sm transition-all duration-300 cursor-pointer ${
                     activeSection === item.path 
-                      ? 'text-white bg-white/10' 
-                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      ? 'theme-text-primary' 
+                      : 'theme-text-secondary hover:theme-text-primary'
                   }`}
+                  style={activeSection === item.path ? { backgroundColor: 'var(--accent-light)' } : undefined}
                   onClick={() => {
                     setIsOpen(false);
                     handleSetActive(item.path);

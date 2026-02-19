@@ -1,28 +1,173 @@
+/* Import HSL Theme System - must be first */
+@import './styles/theme-hsl.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent FOUC: body matches theme background */
+html,
+body {
+  background-color: var(--bg-main);
+  transition: background-color 0.3s ease;
+}
+
+/* Default theme - Neutral Dark Mode */
+:root.neutral,
+:root {
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --bg-card: rgba(31, 41, 55, 0.5);
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  --border-color: rgba(55, 65, 81, 0.5);
+  --border-light: rgba(55, 65, 81, 0.3);
+  --accent-primary: #3b82f6;
+  --accent-secondary: #8b5cf6;
+}
+
+/* Apply theme variables to sections - uses HSL from theme-hsl.css */
+section {
+  background-color: var(--bg-main);
+}
+
+/* Background gradient overrides - use HSL variables */
+.from-gray-900 {
+  --tw-gradient-from: var(--bg-main) !important;
+}
+
+.to-gray-800 {
+  --tw-gradient-to: var(--bg-surface) !important;
+}
+
+/* Gray-800 background override - uses HSL surfaces */
+.bg-gray-800,
+.bg-gray-800\/50 {
+  background-color: var(--bg-surface) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Gray-700 border override */
+.border-gray-700,
+.border-gray-700\/50 {
+  border-color: var(--border-light) !important;
+}
+
+/* Text color overrides - uses HSL text variables */
+.text-white {
+  color: var(--text-primary) !important;
+}
+
+.text-gray-300,
+.text-gray-200 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+/* Accent color override - uses HSL accent variable */
+.text-blue-400,
+.text-blue-300 {
+  color: var(--accent) !important;
+}
+
+.from-blue-500,
+.from-blue-600,
+.from-blue-400 {
+  --tw-gradient-from: var(--accent) !important;
+}
+
+.to-blue-600,
+.to-blue-700,
+.to-blue-400 {
+  --tw-gradient-to: var(--accent-hover) !important;
+}
+
+.bg-blue-500,
+.bg-blue-600,
+.bg-blue-700 {
+  background-color: var(--accent) !important;
+}
+
+.bg-blue-500\/20,
+.bg-blue-500\/10 {
+  background-color: var(--accent-light) !important;
+}
+
+/* Border color overrides for theme */
+.border-blue-500,
+.border-blue-500\/50 {
+  border-color: var(--accent) !important;
+}
+
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(0.8);
     opacity: 0.7;
   }
+
   50% {
     transform: scale(1);
     opacity: 1;
   }
 }
 
-/* body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.hero-heading {
+  background: linear-gradient(to right, var(--accent), var(--accent-hover));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-} */
+.hero-btn-primary,
+.hero-btn-secondary {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
+}
+
+:root[data-mode="light"] .hero-heading {
+  background: none;
+  -webkit-text-fill-color: var(--accent-contrast);
+  color: var(--accent-contrast);
+}
+
+:root[data-mode="light"] .hero-copy-shell {
+  background: radial-gradient(ellipse 90% 80% at 50% 50%,
+      color-mix(in srgb, var(--bg-main) 65%, transparent),
+      transparent 60%);
+  border-radius: 2rem;
+}
+
+:root[data-mode="light"] .hero-btn-primary {
+  border: 1px solid color-mix(in srgb, var(--accent) 70%, #0f172a 30%);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 6px 14px -8px rgba(15, 23, 42, 0.22);
+}
+
+:root[data-mode="light"] .hero-btn-primary:hover {
+  background-color: var(--accent-hover) !important;
+  border-color: color-mix(in srgb, var(--accent-hover) 75%, #0f172a 25%);
+}
+
+:root[data-mode="light"] .hero-btn-secondary {
+  border: 1px solid color-mix(in srgb, var(--border-color) 75%, #0f172a 25%) !important;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 8px 18px -12px rgba(15, 23, 42, 0.2);
+}
+
+:root[data-mode="light"] .hero-btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--bg-surface) 80%, var(--accent-light) 20%) !important;
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border-color) 65%) !important;
+}
