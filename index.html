@@ -1,1 +1,110 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><title>Rauf Fatali</title><script defer="defer" src="/static/js/main.610b44b5.js"></script><link href="/static/css/main.5122a3c3.css" rel="stylesheet"></head><body><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="en" class="neutral" data-mode="dark">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Pre-render theme detection: runs before any paint to prevent FOUC -->
+  <script>
+    (function () {
+      var d = document.documentElement;
+      var mode = localStorage.getItem('theme-mode') || 'dark';
+      var accent = localStorage.getItem('theme-accent') || 'neutral';
+      // Apply saved theme classes immediately
+      d.setAttribute('data-mode', mode);
+      d.className = accent;
+      // Background color lookup to match theme-hsl.css --bg-main values
+      var bgMap = {
+        'neutral-dark': 'hsl(240,10%,5%)',
+        'neutral-light': 'hsl(240,5%,98%)',
+        'blue-dark': 'hsl(220,25%,5%)',
+        'blue-light': 'hsl(220,50%,92%)',
+        'red-dark': 'hsl(355,25%,5%)',
+        'red-light': 'hsl(355,50%,92%)',
+        'green-dark': 'hsl(160,25%,5%)',
+        'green-light': 'hsl(160,50%,92%)'
+      };
+      var accentMap = {
+        'neutral': '#525252',
+        'blue': '#3b82f6',
+        'red': '#f43f5e',
+        'green': '#10b981'
+      };
+      var bg = bgMap[accent + '-' + mode] || bgMap['neutral-dark'];
+      var accentColor = accentMap[accent] || '#ffffff';
+      d.style.backgroundColor = bg;
+      d.style.setProperty('--loader-accent', accentColor);
+
+      // Loader removal logic
+      window.addEventListener('app-ready', function () {
+        var loader = document.getElementById('global-loader');
+        if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(function () { loader.remove(); }, 600);
+        }
+      });
+      // Safety timeout in case app fails to load
+      setTimeout(function () {
+        var loader = document.getElementById('global-loader');
+        if (loader) {
+          loader.style.opacity = '0';
+          setTimeout(function () { loader.remove(); }, 600);
+        }
+      }, 12000);
+    })();
+  </script>
+  <style>
+    #global-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background-color: inherit;
+      /* Inherits from body/html which is set by script */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease-out;
+    }
+
+    .loader-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--loader-accent, #ffffff);
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Rauf Fatali - Ph.D. in Computer Vision - Portfolio" />
+  <link rel="apple-touch-icon" href="/logo192.png" />
+  <link rel="manifest" href="./manifest.json" />
+  <title>Rauf Fatali - Portfolio</title>
+  <script type="module" crossorigin src="./assets/index-DkBCXTHY.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/three-vendor-BGbmoMng.js">
+  <link rel="modulepreload" crossorigin href="./assets/react-vendor-iz5ZzlLu.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-CDjs44IB.css">
+</head>
+
+<body>
+  <div id="global-loader">
+    <div class="loader-spinner"></div>
+  </div>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+
+</html>
