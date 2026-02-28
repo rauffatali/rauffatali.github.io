@@ -1,4 +1,5 @@
 import {
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -9,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useTexture } from '@react-three/drei';
+import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { irisFragmentShader, irisVertexShader } from './EyeWorldShaders';
 import {
@@ -344,101 +345,119 @@ const EyeIrisLightMesh: FC<EyeIrisLightMeshProps> = ({
   const topographyMap = useTexture(textureSet.topography);
   const landMaskMap = useTexture(textureSet.landMask);
 
-  // Synchronous normal map generation (1024x512 is fast enough)
-  const marbleNormalMap = useMemo(
-    () => createMarbleNormalMap(landMaskMap, topographyMap),
-    [landMaskMap, topographyMap]
-  );
-
-  // Synchronous land detail texture (greyscale shading for continents)
-  const landDetailMap = useMemo(() => {
-    if (typeof document === 'undefined') return null;
-    const landImage = landMaskMap.image as CanvasImageSource & { width?: number; height?: number };
-    const topoImage = topographyMap.image as CanvasImageSource & { width?: number; height?: number };
-    if (!landImage?.width || !landImage?.height || !topoImage?.width || !topoImage?.height) return null;
-
-    const size = 2048;
-    const half = size / 2;
-    const landCanvas = document.createElement('canvas');
-    const topoCanvas = document.createElement('canvas');
-    landCanvas.width = size; landCanvas.height = half;
-    topoCanvas.width = size; topoCanvas.height = half;
-    const landCtx = landCanvas.getContext('2d');
-    const topoCtx = topoCanvas.getContext('2d');
-    if (!landCtx || !topoCtx) return null;
-
-    landCtx.drawImage(landImage, 0, 0, size, half);
-    topoCtx.drawImage(topoImage, 0, 0, size, half);
-    const landData = landCtx.getImageData(0, 0, size, half).data;
-    const topoData = topoCtx.getImageData(0, 0, size, half).data;
-
-    const outCanvas = document.createElement('canvas');
-    outCanvas.width = size;
-    outCanvas.height = half;
-    const outCtx = outCanvas.getContext('2d');
-    if (!outCtx) return null;
-    const outImg = outCtx.createImageData(size, half);
-    const out = outImg.data;
-
-    for (let i = 0; i < size * half; i++) {
-      const off = i * 4;
-      const landLum = (landData[off] * 0.299 + landData[off + 1] * 0.587 + landData[off + 2] * 0.114) / 255;
-      const topoLum = (topoData[off] * 0.299 + topoData[off + 1] * 0.587 + topoData[off + 2] * 0.114) / 255;
-      const landMask = THREE.MathUtils.clamp(1 - landLum, 0, 1);
-      const tc = THREE.MathUtils.clamp((topoLum - 0.18) / (0.88 - 0.18), 0, 1);
-      const topoContrast = tc * tc * (3 - 2 * tc);
-      const landShade = 0.76 + (0.96 - 0.76) * topoContrast;
-      const oceanShade = 0.985;
-      const shade = oceanShade + (landShade - oceanShade) * landMask;
-      const v = Math.round(shade * 255);
-      out[off] = v;
-      out[off + 1] = v;
-      out[off + 2] = v;
-      out[off + 3] = 255;
-    }
-
-    outCtx.putImageData(outImg, 0, 0);
-    const tex = new THREE.CanvasTexture(outCanvas);
-    configureTexture(tex, false);
-    tex.offset.set(LIGHT_TEXTURE_U_OFFSET, LIGHT_TEXTURE_V_OFFSET);
-    tex.needsUpdate = true;
-    return tex;
+  // Async normal map generation — deferred to avoid blocking main thread on mount
+  const [marbleNormalMap, setMarbleNormalMap] = useState<THREE.Texture | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const id = setTimeout(() => {
+      if (cancelled) return;
+      const result = createMarbleNormalMap(landMaskMap, topographyMap);
+      if (!cancelled) setMarbleNormalMap(result);
+    }, 0);
+    return () => { cancelled = true; clearTimeout(id); };
   }, [landMaskMap, topographyMap]);
 
-  // Synchronous inverted alpha mask
-  const invertedAlphaMap = useMemo(() => {
-    if (typeof document === 'undefined') return null;
-    const landImage = landMaskMap.image as CanvasImageSource & { width?: number; height?: number };
-    if (!landImage?.width || !landImage?.height) return null;
+  // Async land detail texture (greyscale shading for continents)
+  const [landDetailMap, setLandDetailMap] = useState<THREE.Texture | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const id = setTimeout(() => {
+      if (cancelled) return;
+      if (typeof document === 'undefined') return;
+      const landImage = landMaskMap.image as CanvasImageSource & { width?: number; height?: number };
+      const topoImage = topographyMap.image as CanvasImageSource & { width?: number; height?: number };
+      if (!landImage?.width || !landImage?.height || !topoImage?.width || !topoImage?.height) return;
 
-    const size = 2048;
-    const half = size / 2;
-    const canvas = document.createElement('canvas');
-    canvas.width = size; canvas.height = half;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return null;
+      const size = 2048;
+      const half = size / 2;
+      const landCanvas = document.createElement('canvas');
+      const topoCanvas = document.createElement('canvas');
+      landCanvas.width = size; landCanvas.height = half;
+      topoCanvas.width = size; topoCanvas.height = half;
+      const landCtx = landCanvas.getContext('2d');
+      const topoCtx = topoCanvas.getContext('2d');
+      if (!landCtx || !topoCtx) return;
 
-    ctx.drawImage(landImage, 0, 0, size, half);
-    const srcData = ctx.getImageData(0, 0, size, half).data;
-    const outImg = ctx.createImageData(size, half);
-    const out = outImg.data;
+      landCtx.drawImage(landImage, 0, 0, size, half);
+      topoCtx.drawImage(topoImage, 0, 0, size, half);
+      const landData = landCtx.getImageData(0, 0, size, half).data;
+      const topoData = topoCtx.getImageData(0, 0, size, half).data;
 
-    for (let i = 0; i < size * half; i++) {
-      const off = i * 4;
-      const lum = (srcData[off] * 0.299 + srcData[off + 1] * 0.587 + srcData[off + 2] * 0.114) / 255;
-      const inv = Math.round((1 - lum) * 255);
-      out[off] = inv;
-      out[off + 1] = inv;
-      out[off + 2] = inv;
-      out[off + 3] = 255;
-    }
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = size;
+      outCanvas.height = half;
+      const outCtx = outCanvas.getContext('2d');
+      if (!outCtx) return;
+      const outImg = outCtx.createImageData(size, half);
+      const out = outImg.data;
 
-    ctx.putImageData(outImg, 0, 0);
-    const tex = new THREE.CanvasTexture(canvas);
-    configureTexture(tex, false);
-    tex.offset.set(LIGHT_TEXTURE_U_OFFSET, LIGHT_TEXTURE_V_OFFSET);
-    tex.needsUpdate = true;
-    return tex;
+      for (let i = 0; i < size * half; i++) {
+        const off = i * 4;
+        const landLum = (landData[off] * 0.299 + landData[off + 1] * 0.587 + landData[off + 2] * 0.114) / 255;
+        const topoLum = (topoData[off] * 0.299 + topoData[off + 1] * 0.587 + topoData[off + 2] * 0.114) / 255;
+        const landMask = THREE.MathUtils.clamp(1 - landLum, 0, 1);
+        const tc = THREE.MathUtils.clamp((topoLum - 0.18) / (0.88 - 0.18), 0, 1);
+        const topoContrast = tc * tc * (3 - 2 * tc);
+        const landShade = 0.76 + (0.96 - 0.76) * topoContrast;
+        const oceanShade = 0.985;
+        const shade = oceanShade + (landShade - oceanShade) * landMask;
+        const v = Math.round(shade * 255);
+        out[off] = v;
+        out[off + 1] = v;
+        out[off + 2] = v;
+        out[off + 3] = 255;
+      }
+
+      outCtx.putImageData(outImg, 0, 0);
+      const tex = new THREE.CanvasTexture(outCanvas);
+      configureTexture(tex, false);
+      tex.offset.set(LIGHT_TEXTURE_U_OFFSET, LIGHT_TEXTURE_V_OFFSET);
+      tex.needsUpdate = true;
+      if (!cancelled) setLandDetailMap(tex);
+    }, 0);
+    return () => { cancelled = true; clearTimeout(id); };
+  }, [landMaskMap, topographyMap]);
+
+  // Async inverted alpha mask
+  const [invertedAlphaMap, setInvertedAlphaMap] = useState<THREE.Texture | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const id = setTimeout(() => {
+      if (cancelled) return;
+      if (typeof document === 'undefined') return;
+      const landImage = landMaskMap.image as CanvasImageSource & { width?: number; height?: number };
+      if (!landImage?.width || !landImage?.height) return;
+
+      const size = 2048;
+      const half = size / 2;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = half;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.drawImage(landImage, 0, 0, size, half);
+      const srcData = ctx.getImageData(0, 0, size, half).data;
+      const outImg = ctx.createImageData(size, half);
+      const out = outImg.data;
+
+      for (let i = 0; i < size * half; i++) {
+        const off = i * 4;
+        const lum = (srcData[off] * 0.299 + srcData[off + 1] * 0.587 + srcData[off + 2] * 0.114) / 255;
+        const inv = Math.round((1 - lum) * 255);
+        out[off] = inv;
+        out[off + 1] = inv;
+        out[off + 2] = inv;
+        out[off + 3] = 255;
+      }
+
+      ctx.putImageData(outImg, 0, 0);
+      const tex = new THREE.CanvasTexture(canvas);
+      configureTexture(tex, false);
+      tex.offset.set(LIGHT_TEXTURE_U_OFFSET, LIGHT_TEXTURE_V_OFFSET);
+      tex.needsUpdate = true;
+      if (!cancelled) setInvertedAlphaMap(tex);
+    }, 0);
+    return () => { cancelled = true; clearTimeout(id); };
   }, [landMaskMap]);
 
   const fallbackBase = useMemo(() => parseCssColorToThree('', LIGHT_GLOBE_BASE), []);
@@ -648,11 +667,13 @@ interface EyeWorldSceneProps {
   mapPipeline: EyeMapPipeline;
   vectorAdapter?: EyeVectorAdapter;
   gazeSmoothing: number;
+  onReady?: () => void;
 }
 
 const EyeWorldScene: FC<EyeWorldSceneProps> = ({
   textureSet,
   gazeSmoothing,
+  onReady,
 }) => {
   const [isDarkModeState, setIsDarkModeState] = useState<boolean>(() => {
     if (typeof document === 'undefined') {
@@ -678,6 +699,14 @@ const EyeWorldScene: FC<EyeWorldSceneProps> = ({
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
   }, []);
+
+  // Signal readiness once GPU warm-up is complete
+  // (textures are already loaded via Suspense, canvas ops have had time to compute)
+  useEffect(() => {
+    if (gpuWarmed && onReady) {
+      onReady();
+    }
+  }, [gpuWarmed, onReady]);
   // No need to create pupil texture for Light Mode anymore
   // if (!isDarkMode) ...
 
@@ -1051,7 +1080,7 @@ const EyeWorldScene: FC<EyeWorldSceneProps> = ({
         accentColorRef={liveAccentRef}
       />
 
-      <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+
     </>
   );
 };
@@ -1084,24 +1113,13 @@ const EyeWorld: FC<EyeWorldProps> = ({
     [mapPipeline, textureQuality, textureSet, vectorAdapter]
   );
 
-  // Signal the global loader to fade out once the scene is ready
-  // Wait for a few frames + a short delay so React and Three.js fully settle
-  useEffect(() => {
-    let raf1: number;
-    let raf2: number;
-    let timer: ReturnType<typeof setTimeout>;
-    raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        timer = setTimeout(() => {
-          window.dispatchEvent(new Event('app-ready'));
-        }, 300);
-      });
-    });
-    return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-      clearTimeout(timer);
-    };
+  // Signal the global loader to fade out once the scene is actually ready
+  const handleSceneReady = useCallback(() => {
+    // Small extra delay to let the last canvas textures settle
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('app-ready'));
+    }, 120);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -1118,12 +1136,15 @@ const EyeWorld: FC<EyeWorldProps> = ({
         }}
         dpr={[1, 2]}
       >
-        <EyeWorldScene
-          textureSet={mapConfig.textureSet}
-          mapPipeline={mapConfig.pipeline}
-          vectorAdapter={mapConfig.vectorAdapter}
-          gazeSmoothing={gazeSmoothing}
-        />
+        <Suspense fallback={null}>
+          <EyeWorldScene
+            textureSet={mapConfig.textureSet}
+            mapPipeline={mapConfig.pipeline}
+            vectorAdapter={mapConfig.vectorAdapter}
+            gazeSmoothing={gazeSmoothing}
+            onReady={handleSceneReady}
+          />
+        </Suspense>
       </Canvas>
     </div>
   );

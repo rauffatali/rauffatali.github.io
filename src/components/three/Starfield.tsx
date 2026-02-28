@@ -1,5 +1,5 @@
 
-import { useRef, useMemo, FC, MutableRefObject } from 'react';
+import { useRef, useMemo, FC, MutableRefObject, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -71,6 +71,17 @@ const Starfield: FC<StarfieldProps> = ({ pointerRef, isDarkMode, accentColorRef 
         return [pos, rand];
     }, []);
 
+    // Pre-compute which stars twinkle (randomness > 0.5) so we only iterate those per-frame
+    const twinklingIndices = useMemo(() => {
+        const indices: number[] = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+            if (randomness[i] > 0.5) {
+                indices.push(i);
+            }
+        }
+        return indices;
+    }, [randomness]);
+
     const geometry = useMemo(() => {
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -82,8 +93,34 @@ const Starfield: FC<StarfieldProps> = ({ pointerRef, isDarkMode, accentColorRef 
 
     const texture = useMemo(() => createCircleTexture(), []);
 
+    // Track the last accent color to update static stars only when it changes
+    const prevAccentRef = useRef({ r: -1, g: -1, b: -1 });
+
+    // Set static (non-twinkling) star colors once when accent/mode changes
+    useEffect(() => {
+        if (!pointsRef.current) return;
+        const colors = geometry.attributes.color;
+        const colorArray = colors.array as Float32Array;
+        const accentColor = accentColorRef.current;
+        const baseR = isDarkMode ? accentColor.r : accentColor.r * 0.65;
+        const baseG = isDarkMode ? accentColor.g : accentColor.g * 0.65;
+        const baseB = isDarkMode ? accentColor.b : accentColor.b * 0.65;
+
+        for (let i = 0; i < STAR_COUNT; i++) {
+            if (randomness[i] > 0.5) continue; // Twinkling stars are handled per-frame
+            const idx = i * 3;
+            const brightness = isDarkMode ? 1.0 : 0.75;
+            colorArray[idx] = baseR * brightness;
+            colorArray[idx + 1] = baseG * brightness;
+            colorArray[idx + 2] = baseB * brightness;
+        }
+        colors.needsUpdate = true;
+    }, [isDarkMode, geometry, randomness, accentColorRef]);
+
     // Parallax smoothing state
     const currentParallax = useRef(new THREE.Vector2(0, 0));
+    // Frame counter for throttling color buffer uploads
+    const frameCountRef = useRef(0);
 
     useFrame((state) => {
         if (!pointsRef.current) return;
@@ -91,27 +128,45 @@ const Starfield: FC<StarfieldProps> = ({ pointerRef, isDarkMode, accentColorRef 
         const time = state.clock.elapsedTime;
         const material = pointsRef.current.material as THREE.PointsMaterial;
 
-        // --- 1. Animation Logic (Twinkle) ---
-        // Direct Float32Array access, faster than setXYZ() per-star
+        // --- 1. Animation Logic (Twinkle) — only twinkling stars ---
         const colors = geometry.attributes.color;
         const colorArray = colors.array as Float32Array;
-        const count = colors.count;
+
+        // Check if accent color changed (for static stars refresh)
+        const accentColor = accentColorRef.current;
+        if (
+            prevAccentRef.current.r !== accentColor.r ||
+            prevAccentRef.current.g !== accentColor.g ||
+            prevAccentRef.current.b !== accentColor.b
+        ) {
+            prevAccentRef.current.r = accentColor.r;
+            prevAccentRef.current.g = accentColor.g;
+            prevAccentRef.current.b = accentColor.b;
+            // Update static stars
+            const baseR = isDarkMode ? accentColor.r : accentColor.r * 0.65;
+            const baseG = isDarkMode ? accentColor.g : accentColor.g * 0.65;
+            const baseB = isDarkMode ? accentColor.b : accentColor.b * 0.65;
+            for (let i = 0; i < STAR_COUNT; i++) {
+                if (randomness[i] > 0.5) continue;
+                const idx = i * 3;
+                const brightness = isDarkMode ? 1.0 : 0.75;
+                colorArray[idx] = baseR * brightness;
+                colorArray[idx + 1] = baseG * brightness;
+                colorArray[idx + 2] = baseB * brightness;
+            }
+        }
 
         // Determine base color based on mode
-        const accentColor = accentColorRef.current;
         const baseR = isDarkMode ? accentColor.r : accentColor.r * 0.65;
         const baseG = isDarkMode ? accentColor.g : accentColor.g * 0.65;
         const baseB = isDarkMode ? accentColor.b : accentColor.b * 0.65;
 
-        for (let i = 0; i < count; i++) {
+        // Only iterate twinkling stars (~50% of total)
+        for (let j = 0; j < twinklingIndices.length; j++) {
+            const i = twinklingIndices[j];
             const offset = randomness[i] * 100;
-            let brightness = 1.0;
-
-            if (randomness[i] > 0.5) {
-                const wave = Math.sin(time * 2 + offset);
-                brightness = THREE.MathUtils.mapLinear(wave, -1, 1, 0.4, 1.0);
-            }
-
+            const wave = Math.sin(time * 2 + offset);
+            let brightness = THREE.MathUtils.mapLinear(wave, -1, 1, 0.4, 1.0);
             const finalBrightness = isDarkMode ? brightness : brightness * 0.75;
 
             const idx = i * 3;
@@ -119,7 +174,12 @@ const Starfield: FC<StarfieldProps> = ({ pointerRef, isDarkMode, accentColorRef 
             colorArray[idx + 1] = baseG * finalBrightness;
             colorArray[idx + 2] = baseB * finalBrightness;
         }
-        colors.needsUpdate = true;
+
+        // Throttle GPU buffer upload to every 2nd frame
+        frameCountRef.current++;
+        if (frameCountRef.current % 2 === 0) {
+            colors.needsUpdate = true;
+        }
 
         // --- 2. Material Updates (only when mode changes) ---
         if (prevDarkModeRef.current !== isDarkMode) {
@@ -167,3 +227,4 @@ const Starfield: FC<StarfieldProps> = ({ pointerRef, isDarkMode, accentColorRef 
 };
 
 export default Starfield;
+
