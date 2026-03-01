@@ -34,9 +34,13 @@
       d.style.backgroundColor = bg;
       d.style.setProperty('--loader-accent', accentColor);
 
+
       // Loader removal logic
       window.addEventListener('app-ready', function () {
+        var root = document.getElementById('root');
         var loader = document.getElementById('global-loader');
+        // Reveal the app content and fade out the loader simultaneously
+        if (root) root.style.opacity = '1';
         if (loader) {
           loader.style.opacity = '0';
           setTimeout(function () { loader.remove(); }, 600);
@@ -44,7 +48,9 @@
       });
       // Safety timeout in case app fails to load
       setTimeout(function () {
+        var root = document.getElementById('root');
         var loader = document.getElementById('global-loader');
+        if (root) root.style.opacity = '1';
         if (loader) {
           loader.style.opacity = '0';
           setTimeout(function () { loader.remove(); }, 600);
@@ -93,11 +99,11 @@
   <link rel="apple-touch-icon" href="/logo192.png" />
   <link rel="manifest" href="./manifest.json" />
   <title>Rauf Fatali - Portfolio</title>
-  <script type="module" crossorigin src="./assets/index-Drv73DFo.js"></script>
+  <script type="module" crossorigin src="./assets/index-7W8ZDosi.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/three-core-B21wAXIv.js">
   <link rel="modulepreload" crossorigin href="./assets/three-drei-h8KqwSb2.js">
   <link rel="modulepreload" crossorigin href="./assets/react-vendor-CUCvcJsG.js">
-  <link rel="stylesheet" crossorigin href="./assets/index-BK_sMpvu.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-BEo-KLmn.css">
 </head>
 
 <body>
@@ -105,7 +111,7 @@
     <div class="loader-spinner"></div>
   </div>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
+  <div id="root" style="opacity: 0; transition: opacity 0.4s ease-in;"></div>
 </body>
 
 </html>

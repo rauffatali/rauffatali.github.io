@@ -1,4 +1,4 @@
-import{d as e,u as me,j as s,C as ke,f as ce}from"./three-drei-h8KqwSb2.js";import{m as xe}from"./index-Drv73DFo.js";import{i as L,M as j,j as Te,k as ye,d as X,h as be,l as de,m as Le,n as Se,E as Ee,Q as De,o as Ae,p as je,q as Ie,r as Ue,s as Ge,t as _e}from"./three-core-B21wAXIv.js";import"./react-vendor-CUCvcJsG.js";const Fe=`
+import{d as e,u as me,j as s,C as ke,f as ce}from"./three-drei-h8KqwSb2.js";import{m as xe}from"./index-7W8ZDosi.js";import{i as L,M as j,j as Te,k as ye,d as X,h as be,l as de,m as Le,n as Se,E as Ee,Q as De,o as Ae,p as je,q as Ie,r as Ue,s as Ge,t as _e}from"./three-core-B21wAXIv.js";import"./react-vendor-CUCvcJsG.js";const Fe=`
   varying vec2 vUv;
   varying vec3 vLocalNormal;
   varying vec3 vViewDir;
