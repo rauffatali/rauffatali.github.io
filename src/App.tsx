@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 import ThemeSelector from './components/common/ThemeSelector';
 import './App.css';
 
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         <About />
         <Projects />
         <Contact />
+        <Footer />
       </Suspense>
     </div>
   );

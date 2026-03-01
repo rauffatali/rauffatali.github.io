@@ -171,3 +171,32 @@ section {
   background-color: color-mix(in srgb, var(--bg-surface) 80%, var(--accent-light) 20%) !important;
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border-color) 65%) !important;
 }
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.footer-social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background-color: transparent;
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.3s ease;
+}
+
+.footer-social-icon:hover {
+  color: var(--accent) !important;
+  border-color: var(--accent);
+  background-color: var(--accent-light);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px -6px var(--accent);
+}
