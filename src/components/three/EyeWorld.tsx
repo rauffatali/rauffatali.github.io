@@ -22,11 +22,14 @@ import {
 } from './eyeMapConfig';
 import { parseCssColorToThree } from './eyeThemeBridge';
 import Starfield from './Starfield';
+import { isMobile } from '../../utils/isMobile';
+
+const MOBILE = isMobile();
 
 const IRIS_RADIUS = 0.98;
 const CORNEA_RADIUS = 1.0;
 const DISPLAY_SCALE = 1.84;
-const EYE_SEGMENTS = 128;
+const EYE_SEGMENTS = MOBILE ? 48 : 128;
 const GAZE_INTENSITY = 0.95;
 const MAX_GAZE_DEGREES = 35;
 const FALLBACK_ACCENT = 'hsl(220, 80%, 50%)';
@@ -271,7 +274,7 @@ interface EyeIrisMeshProps {
 const configureTexture = (texture: THREE.Texture, asColor: boolean): void => {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
-  texture.anisotropy = 8;
+  texture.anisotropy = MOBILE ? 2 : 8;
   texture.minFilter = THREE.LinearMipmapLinearFilter;
   texture.magFilter = THREE.LinearFilter;
   texture.colorSpace = asColor ? THREE.SRGBColorSpace : THREE.NoColorSpace;
@@ -368,7 +371,7 @@ const EyeIrisLightMesh: FC<EyeIrisLightMeshProps> = ({
       const topoImage = topographyMap.image as CanvasImageSource & { width?: number; height?: number };
       if (!landImage?.width || !landImage?.height || !topoImage?.width || !topoImage?.height) return;
 
-      const size = 2048;
+      const size = MOBILE ? 1024 : 2048;
       const half = size / 2;
       const landCanvas = document.createElement('canvas');
       const topoCanvas = document.createElement('canvas');
@@ -428,7 +431,7 @@ const EyeIrisLightMesh: FC<EyeIrisLightMeshProps> = ({
       const landImage = landMaskMap.image as CanvasImageSource & { width?: number; height?: number };
       if (!landImage?.width || !landImage?.height) return;
 
-      const size = 2048;
+      const size = MOBILE ? 1024 : 2048;
       const half = size / 2;
       const canvas = document.createElement('canvas');
       canvas.width = size; canvas.height = half;
@@ -596,25 +599,41 @@ const EyeCorneaMesh: FC<EyeCorneaMeshProps> = ({ materialRef }) => {
   return (
     <mesh>
       <sphereGeometry args={[CORNEA_RADIUS, EYE_SEGMENTS, EYE_SEGMENTS]} />
-      <meshPhysicalMaterial
-        ref={materialRef}
-        color={white}
-        emissive={new THREE.Color(0, 0, 0)}
-        emissiveIntensity={0}
-        metalness={0}
-        roughness={0.05}
-        transmission={1.0}
-        thickness={0.5}
-        ior={1.33}
-        clearcoat={1}
-        clearcoatRoughness={0.05}
-        transparent
-        opacity={0.1}
-        depthWrite={false}
-        envMapIntensity={0.28}
-        attenuationDistance={0.75}
-        attenuationColor={white}
-      />
+      {MOBILE ? (
+        /* Mobile: lighter material — avoids expensive transmission multi-pass */
+        <meshStandardMaterial
+          ref={materialRef as React.Ref<THREE.MeshStandardMaterial>}
+          color={white}
+          emissive={new THREE.Color(0, 0, 0)}
+          emissiveIntensity={0}
+          metalness={0.05}
+          roughness={0.08}
+          transparent
+          opacity={0.1}
+          depthWrite={false}
+          envMapIntensity={0.22}
+        />
+      ) : (
+        <meshPhysicalMaterial
+          ref={materialRef}
+          color={white}
+          emissive={new THREE.Color(0, 0, 0)}
+          emissiveIntensity={0}
+          metalness={0}
+          roughness={0.05}
+          transmission={1.0}
+          thickness={0.5}
+          ior={1.33}
+          clearcoat={1}
+          clearcoatRoughness={0.05}
+          transparent
+          opacity={0.1}
+          depthWrite={false}
+          envMapIntensity={0.28}
+          attenuationDistance={0.75}
+          attenuationColor={white}
+        />
+      )}
     </mesh>
   );
 };
@@ -1097,7 +1116,7 @@ export interface EyeWorldProps {
 const EyeWorld: FC<EyeWorldProps> = ({
   className,
   mapPipeline = 'raster',
-  textureQuality = '4k',
+  textureQuality = MOBILE ? '2k' : '4k',
   gazeSmoothing = 0.14,
   textureSet,
   vectorAdapter,
@@ -1134,7 +1153,7 @@ const EyeWorld: FC<EyeWorldProps> = ({
         onCreated={({ gl }) => {
           gl.setClearColor(0x000000, 0);
         }}
-        dpr={[1, 2]}
+        dpr={MOBILE ? [1, 1] : [1, 2]}
       >
         <Suspense fallback={null}>
           <EyeWorldScene

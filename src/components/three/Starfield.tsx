@@ -2,12 +2,16 @@
 import { useRef, useMemo, FC, MutableRefObject, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { isMobile, prefersReducedMotion } from '../../utils/isMobile';
 
 
-// Configuration
-const STAR_COUNT = 4000;
+// Configuration — adaptive for mobile
+const MOBILE = isMobile();
+const REDUCED_MOTION = prefersReducedMotion();
+const STAR_COUNT = MOBILE ? 1500 : 4000;
 const STAR_SIZE_BASE = 0.12;
 const STAR_DEPTH_RADIUS = 25; // Large sphere radius
+const UPLOAD_THROTTLE = MOBILE ? 3 : 2;  // frames between GPU uploads
 
 interface StarfieldProps {
     pointerRef: MutableRefObject<THREE.Vector2>;
@@ -161,23 +165,25 @@ const Starfield: FC<StarfieldProps> = ({ pointerRef, isDarkMode, accentColorRef 
         const baseG = isDarkMode ? accentColor.g : accentColor.g * 0.65;
         const baseB = isDarkMode ? accentColor.b : accentColor.b * 0.65;
 
-        // Only iterate twinkling stars (~50% of total)
-        for (let j = 0; j < twinklingIndices.length; j++) {
-            const i = twinklingIndices[j];
-            const offset = randomness[i] * 100;
-            const wave = Math.sin(time * 2 + offset);
-            let brightness = THREE.MathUtils.mapLinear(wave, -1, 1, 0.4, 1.0);
-            const finalBrightness = isDarkMode ? brightness : brightness * 0.75;
+        // Only iterate twinkling stars (~50% of total) — skip entirely for reduced-motion
+        if (!REDUCED_MOTION) {
+            for (let j = 0; j < twinklingIndices.length; j++) {
+                const i = twinklingIndices[j];
+                const offset = randomness[i] * 100;
+                const wave = Math.sin(time * 2 + offset);
+                let brightness = THREE.MathUtils.mapLinear(wave, -1, 1, 0.4, 1.0);
+                const finalBrightness = isDarkMode ? brightness : brightness * 0.75;
 
-            const idx = i * 3;
-            colorArray[idx] = baseR * finalBrightness;
-            colorArray[idx + 1] = baseG * finalBrightness;
-            colorArray[idx + 2] = baseB * finalBrightness;
+                const idx = i * 3;
+                colorArray[idx] = baseR * finalBrightness;
+                colorArray[idx + 1] = baseG * finalBrightness;
+                colorArray[idx + 2] = baseB * finalBrightness;
+            }
         }
 
-        // Throttle GPU buffer upload to every 2nd frame
+        // Throttle GPU buffer upload (every 2nd frame desktop, 3rd on mobile)
         frameCountRef.current++;
-        if (frameCountRef.current % 2 === 0) {
+        if (frameCountRef.current % UPLOAD_THROTTLE === 0) {
             colors.needsUpdate = true;
         }
 
