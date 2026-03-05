@@ -882,9 +882,12 @@ const EyeWorldScene: FC<EyeWorldSceneProps> = ({
       corneaMaterialRef.current.emissiveIntensity = isDarkMode ? 0.32 : 0;
       corneaMaterialRef.current.opacity = isDarkMode ? 0.1 : 0.018;
       corneaMaterialRef.current.envMapIntensity = isDarkMode ? 0.28 : 0.09;
-      corneaMaterialRef.current.clearcoat = isDarkMode ? 1 : 0.9;
-      corneaMaterialRef.current.clearcoatRoughness = isDarkMode ? 0.05 : 0.06;
       corneaMaterialRef.current.roughness = isDarkMode ? 0.05 : 0.05;
+      // clearcoat & clearcoatRoughness only exist on MeshPhysicalMaterial (desktop)
+      if (!MOBILE) {
+        (corneaMaterialRef.current as THREE.MeshPhysicalMaterial).clearcoat = isDarkMode ? 1 : 0.9;
+        (corneaMaterialRef.current as THREE.MeshPhysicalMaterial).clearcoatRoughness = isDarkMode ? 0.05 : 0.06;
+      }
     }
     if (pupilMaterialRef.current) {
       pupilMaterialRef.current.opacity = isDarkMode ? 0 : 0.98;
@@ -941,7 +944,10 @@ const EyeWorldScene: FC<EyeWorldSceneProps> = ({
       corneaTintA.current.lerp(targetColors.current.corneaA, lerpFactor);
       corneaTintB.current.lerp(targetColors.current.corneaB, lerpFactor);
       corneaMaterialRef.current.color.copy(corneaTintA.current);
-      corneaMaterialRef.current.attenuationColor.copy(corneaTintB.current);
+      // attenuationColor only exists on MeshPhysicalMaterial (desktop)
+      if (!MOBILE) {
+        (corneaMaterialRef.current as THREE.MeshPhysicalMaterial).attenuationColor.copy(corneaTintB.current);
+      }
     }
     if (ambientLightRef.current) {
       ambientLightRef.current.color.lerp(targetColors.current.ambient, lerpFactor);
