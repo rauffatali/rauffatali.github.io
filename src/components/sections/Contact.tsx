@@ -7,14 +7,14 @@ import { SocialLink } from '../../types';
 
 const socialLinks: SocialLink[] = [
   {
-    platform: 'GitHub',
-    url: 'https://github.com/rauffatali',
-    icon: 'github'
-  },
-  {
     platform: 'LinkedIn',
     url: 'https://linkedin.com/in/rauffatali',
     icon: 'linkedin'
+  },
+  {
+    platform: 'GitHub',
+    url: 'https://github.com/rauffatali',
+    icon: 'github'
   },
   {
     platform: 'X',
@@ -41,6 +41,7 @@ const Contact: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCaptcha, setShowCaptcha] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -48,30 +49,18 @@ const Contact: React.FC = () => {
   });
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Check if env vars are configured
+  const sendEmail = async (recaptchaToken: string = '') => {
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined;
     const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string | undefined;
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined;
-    const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string | undefined;
 
-    if (!serviceId || !templateId || !publicKey || !recaptchaSiteKey) {
-      toast.error('Email service or reCAPTCHA is not configured yet. Please try again later.');
+    if (!serviceId || !templateId || !publicKey) {
+      toast.error('Email service is not configured yet. Please try again later.');
       console.error('Missing environment variables.');
       return;
     }
 
-    const recaptchaValue = recaptchaRef.current?.getValue();
-    if (!recaptchaValue) {
-      toast.error('Please complete the reCAPTCHA verification.');
-      return;
-    }
-
     setIsSubmitting(true);
-
-    // Loading toast
     const loadingToast = toast.loading('Sending your message...');
 
     try {
@@ -80,7 +69,7 @@ const Contact: React.FC = () => {
         user_email: formData.email,
         message: formData.message,
         time: new Date().toLocaleString(),
-        'g-recaptcha-response': recaptchaValue,
+        ...(recaptchaToken && { 'g-recaptcha-response': recaptchaToken }),
       };
 
       await emailjs.send(
@@ -105,6 +94,7 @@ const Contact: React.FC = () => {
       setFormData({ name: '', email: '', message: '' });
       if (formRef.current) formRef.current.reset();
       if (recaptchaRef.current) recaptchaRef.current.reset();
+      setShowCaptcha(false);
 
     } catch (error) {
       console.error('EmailJS Error:', error);
@@ -115,6 +105,32 @@ const Contact: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string | undefined;
+
+    // If reCAPTCHA is configured, show it instead of submitting immediately
+    if (recaptchaSiteKey && !showCaptcha) {
+      setShowCaptcha(true);
+      return;
+    }
+
+    // If it's already shown, they clicked submit without checking the box
+    if (recaptchaSiteKey && showCaptcha) {
+      const recaptchaValue = recaptchaRef.current?.getValue();
+      if (!recaptchaValue) {
+        toast.error('Please complete the reCAPTCHA verification.');
+        return;
+      }
+      await sendEmail(recaptchaValue);
+      return;
+    }
+
+    // Fallback if no captcha is configured in env
+    await sendEmail();
   };
 
   return (
@@ -231,38 +247,43 @@ const Contact: React.FC = () => {
                 />
               </div>
 
-              {import.meta.env.VITE_RECAPTCHA_SITE_KEY && (
-                <div className="flex justify-start">
-                  <ReCAPTCHA
-                    ref={recaptchaRef}
-                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                    theme="dark"
-                  />
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="hero-btn-primary w-full sm:w-auto px-8 py-3.5 mt-4 rounded-lg font-bold flex items-center justify-center transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-1 hover:shadow-xl"
-                style={{
-                  backgroundColor: 'var(--accent)',
-                  color: 'var(--text-on-accent, #ffffff)',
-                  border: '1px solid transparent'
-                }}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
-                    Send Message
-                  </>
+              <div>
+                {import.meta.env.VITE_RECAPTCHA_SITE_KEY && (
+                  <div className={`transition-all duration-300 overflow-hidden flex justify-start ${showCaptcha ? 'max-h-32 opacity-100 mb-6' : 'max-h-0 opacity-0 mb-0'}`}>
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                      theme="dark"
+                      onChange={(val) => {
+                        if (val) sendEmail(val);
+                      }}
+                    />
+                  </div>
                 )}
-              </button>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="hero-btn-primary w-full sm:w-auto px-8 py-3.5 rounded-lg font-bold flex items-center justify-center transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-1 hover:shadow-xl"
+                  style={{
+                    backgroundColor: 'var(--accent)',
+                    color: 'var(--text-on-accent, #ffffff)',
+                    border: '1px solid transparent'
+                  }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
+                      Send Message
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
           </div>
 
