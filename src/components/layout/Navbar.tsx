@@ -97,7 +97,7 @@ const Navbar: React.FC = () => {
       </div>
 
       <nav ref={navbarRef} className="fixed top-0 left-0 w-full z-50 transition-all duration-300">
-        <div className={`mx-auto transition-all duration-500 ${scrolled ? 'w-[92%] md:w-[89%] lg:w-[80%] mt-4' : 'w-full px-6'
+        <div className={`mx-auto relative transition-all duration-500 ${scrolled ? 'w-[92%] md:w-[89%] lg:w-[80%] mt-4' : 'w-full px-6'
           }`}>
           <div className={`mx-auto rounded-2xl transition-all duration-500 ${scrolled ? 'theme-bg-surface backdrop-blur-md shadow-lg px-6' : 'bg-transparent px-3'
             }`} style={scrolled ? { backgroundColor: 'var(--bg-surface)' } : undefined}>
@@ -159,14 +159,14 @@ const Navbar: React.FC = () => {
 
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative w-10 h-10 focus:outline-none cursor-pointer theme-text-primary"
+                className="relative w-10 h-10 focus:outline-none cursor-pointer theme-text-primary rounded-xl transition-colors duration-300 hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
               >
-                <div className="absolute w-6 transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
-                  <span className={`absolute h-0.5 w-6 transform transition duration-300 ease-in-out ${isOpen ? 'rotate-45 delay-200' : '-translate-y-2'
+                <div className="absolute w-5 transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
+                  <span className={`absolute h-0.5 w-5 transform transition duration-300 ease-in-out rounded-full ${isOpen ? 'rotate-45 delay-75' : '-translate-y-1.5'
                     }`} style={{ backgroundColor: 'var(--text-primary)' }} />
-                  <span className={`absolute h-0.5 w-6 transform transition duration-300 ease-in-out ${isOpen ? 'opacity-0' : 'opacity-100'
+                  <span className={`absolute h-0.5 w-5 transform transition duration-300 ease-in-out rounded-full ${isOpen ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
                     }`} style={{ backgroundColor: 'var(--text-primary)' }} />
-                  <span className={`absolute h-0.5 w-6 transform transition duration-300 ease-in-out ${isOpen ? '-rotate-45 delay-200' : 'translate-y-2'
+                  <span className={`absolute h-0.5 w-5 transform transition duration-300 ease-in-out rounded-full ${isOpen ? '-rotate-45 delay-75' : 'translate-y-1.5'
                     }`} style={{ backgroundColor: 'var(--text-primary)' }} />
                 </div>
               </button>
@@ -174,27 +174,38 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile Menu */}
-          <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-            }`}>
-            <div className="backdrop-blur-md shadow-lg" style={{ backgroundColor: 'var(--bg-surface)' }}>
-              {navItems.map((item) => (
+          <div className={`md:hidden absolute left-0 right-0 mt-3 mx-2 sm:mx-0 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-3xl backdrop-blur-xl border border-black/5 dark:border-white/10 overflow-hidden shadow-2xl ${isOpen
+              ? 'top-full opacity-100 pointer-events-auto translate-y-0'
+              : 'top-full opacity-0 pointer-events-none translate-y-[-10px]'
+            }`} style={{ backgroundColor: 'var(--bg-surface)' }}>
+            <div className="p-3 flex flex-col gap-1">
+              {navItems.map((item, index) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   smooth={true}
                   offset={item.path === 'home' ? 0 : SCROLL_OFFSET}
                   duration={500}
-                  className={`block px-6 py-3 text-sm transition-all duration-300 cursor-pointer ${activeSection === item.path
-                    ? 'theme-text-primary'
-                    : 'theme-text-secondary hover:theme-text-primary'
+                  className={`group block px-5 py-4 text-base font-medium rounded-2xl transition-all duration-300 cursor-pointer transform ${isOpen
+                      ? 'translate-y-0 opacity-100'
+                      : 'translate-y-[-10px] opacity-0'
+                    } ${activeSection === item.path
+                      ? 'theme-text-primary'
+                      : 'theme-text-secondary hover:theme-text-primary'
                     }`}
-                  style={activeSection === item.path ? { backgroundColor: 'var(--accent-light)' } : undefined}
+                  style={{
+                    transitionDelay: isOpen ? `${index * 50 + 100}ms` : '0ms',
+                    backgroundColor: activeSection === item.path ? 'var(--accent-light)' : undefined
+                  }}
                   onClick={() => {
                     setIsOpen(false);
                     handleNavClick(item.path);
                   }}
                 >
-                  {item.title}
+                  <div className="flex items-center space-x-3">
+                    <div className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${activeSection === item.path ? 'opacity-100 scale-100' : 'opacity-0 scale-0 group-hover:opacity-50 group-hover:scale-100'}`} style={{ backgroundColor: 'var(--accent)' }} />
+                    <span className="relative z-10 text-sm transition-transform duration-300 group-hover:translate-x-1">{item.title}</span>
+                  </div>
                 </Link>
               ))}
             </div>

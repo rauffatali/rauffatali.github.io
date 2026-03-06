@@ -8,7 +8,7 @@ import { isMobile, prefersReducedMotion } from '../../utils/isMobile';
 // Configuration — adaptive for mobile
 const MOBILE = isMobile();
 const REDUCED_MOTION = prefersReducedMotion();
-const STAR_COUNT = MOBILE ? 1500 : 4000;
+const STAR_COUNT = MOBILE ? 2500 : 4000;
 const STAR_SIZE_BASE = 0.12;
 const STAR_DEPTH_RADIUS = 25; // Large sphere radius
 const UPLOAD_THROTTLE = MOBILE ? 3 : 2;  // frames between GPU uploads

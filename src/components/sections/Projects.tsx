@@ -36,7 +36,7 @@ const projects: Project[] = [
 
 const Projects: React.FC = () => {
   return (
-    <section id="projects" className="min-h-screen py-20 theme-bg-main">
+    <section id="projects" className="py-20 theme-bg-main">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold theme-text-primary mb-4">Featured Projects</h2>
@@ -60,7 +60,7 @@ const Projects: React.FC = () => {
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              
+
               <div className="p-6">
                 <h3 className="text-xl font-bold theme-text-primary mb-3" style={{ color: 'var(--accent)' }}>
                   {project.title}
@@ -68,7 +68,7 @@ const Projects: React.FC = () => {
                 <p className="theme-text-secondary mb-4">
                   {project.description}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2 mb-4">
                   {project.tags.map((tag, tagIndex) => (
                     <span
@@ -80,7 +80,7 @@ const Projects: React.FC = () => {
                     </span>
                   ))}
                 </div>
-                
+
                 <div className="flex gap-4">
                   <a
                     href={project.github}

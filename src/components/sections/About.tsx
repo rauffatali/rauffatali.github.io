@@ -12,7 +12,7 @@ const skills: Skill[] = [
 
 const About: React.FC = () => {
   return (
-    <section id="about" className="min-h-screen py-20 theme-bg-surface">
+    <section id="about" className="py-20 theme-bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold theme-text-primary mb-4">About Me</h2>
@@ -55,10 +55,10 @@ const About: React.FC = () => {
                   <div className="h-2 rounded-full overflow-hidden theme-bg-main" style={{ backgroundColor: 'var(--bg-main)' }}>
                     <div
                       className="h-full rounded-full transition-all duration-500 ease-out"
-                      style={{ 
+                      style={{
                         width: `${skill.level}%`,
                         background: 'linear-gradient(to right, var(--accent), var(--accent-hover))',
-                        boxShadow: '0 0 10px var(--accent)' 
+                        boxShadow: '0 0 10px var(--accent)'
                       }}
                     />
                   </div>
