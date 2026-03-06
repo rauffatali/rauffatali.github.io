@@ -1,4 +1,4 @@
-import{d as e,u as he,j as s,C as De,f as le}from"./three-drei-h8KqwSb2.js";import{m as we}from"./index-DLUTS6gI.js";import{i as k,M as j,j as Ae,k as Me,d as X,h as Ce,l as pe,m as je,n as Ie,E as Ue,Q as _e,o as Ge,p as Fe,q as Ne,r as Be,s as Pe,t as Oe}from"./three-core-B21wAXIv.js";import"./react-vendor-CUCvcJsG.js";const He=`
+import{d as e,u as he,j as s,C as De,f as le}from"./three-drei-h8KqwSb2.js";import{m as we}from"./index-ztkfiBKf.js";import{i as k,M as j,j as Ae,k as Me,d as X,h as Ce,l as pe,m as je,n as Ie,E as Ue,Q as _e,o as Ge,p as Fe,q as Ne,r as Be,s as Pe,t as Oe}from"./three-core-B21wAXIv.js";import"./react-vendor-CUCvcJsG.js";const He=`
   varying vec2 vUv;
   varying vec3 vLocalNormal;
   varying vec3 vViewDir;
@@ -101,8 +101,8 @@ import{d as e,u as he,j as s,C as De,f as le}from"./three-drei-h8KqwSb2.js";impo
     vec3 emissive = uAccentGlow * (night * landMask) * uDarkMode * 2.05;
     baseColor += emissive;
 
-    float edgeGlow = pow(smoothstep(0.5, 0.97, 1.0 - normal.z), 1.25);
-    float edgeGlowStrength = mix(0.008, 0.25, uDarkMode);
+    float edgeGlow = pow(smoothstep(0.56, 0.97, 1.0 - normal.z), 1.25);
+    float edgeGlowStrength = mix(0.008, 0.50, uDarkMode);
     baseColor += uAccentGlow * edgeGlow * edgeGlowStrength;
     vec2 gazeCenter = vec2(0.0, 0.0);
     float pupilRadial = length(normal.xy - gazeCenter);
