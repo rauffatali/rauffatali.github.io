@@ -103,8 +103,8 @@ export const irisFragmentShader = `
     vec3 emissive = uAccentGlow * (night * landMask) * uDarkMode * 2.05;
     baseColor += emissive;
 
-    float edgeGlow = pow(smoothstep(0.56, 0.97, 1.0 - normal.z), 1.25);
-    float edgeGlowStrength = mix(0.008, 0.50, uDarkMode);
+    float edgeGlow = pow(smoothstep(0.65, 0.97, 1.0 - normal.z), 1.25);
+    float edgeGlowStrength = mix(0.008, 0.35, uDarkMode);
     baseColor += uAccentGlow * edgeGlow * edgeGlowStrength;
     vec2 gazeCenter = vec2(0.0, 0.0);
     float pupilRadial = length(normal.xy - gazeCenter);

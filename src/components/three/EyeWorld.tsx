@@ -930,7 +930,20 @@ const EyeWorldScene: FC<EyeWorldSceneProps> = ({
     updateThreeTheme(true);
   }, [isDarkModeState, updateThreeTheme]);
 
+  // Retry theme application for the first ~30 frames (~0.5s) to ensure
+  // ThemeSelector's useEffect has had time to apply CSS classes/variables.
+  // Without this, the iris shader starts with dim fallback colors.
+  const themeRetryCountRef = useRef(0);
+
   useFrame((state, delta) => {
+    // Keep forcing theme updates for the first 30 frames
+    if (themeRetryCountRef.current < 30) {
+      themeRetryCountRef.current++;
+      if (irisMaterialRef.current) {
+        updateThreeTheme(true);
+      }
+    }
+
     // Color Smoothing (Lerp)
     const lerpFactor = THREE.MathUtils.clamp(delta * 2.0, 0, 1);
 
